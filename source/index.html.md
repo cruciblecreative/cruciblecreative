@@ -15,7 +15,7 @@ Some of the snippet examples use an object similar to that of what you have outl
 
 ```javascript
 var garment = {
-  viewerID: ID,
+  viewerID: 'DT0STRJNW1',
   garment: GARMENTS.SUIT_JACKET,
 	material: MATERIALS.TWEED_5,
 	elements: [
