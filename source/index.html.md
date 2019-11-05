@@ -47,7 +47,7 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 </aside> -->
 
 # Customizer Functions
-
+ 
 changeGarment - e.g. jacket, trousers, etc.
 - changeGarmentView - e.g. jacket default, jacket open/lining, jacket zoom level, etc.
 - changeGarmentFabric
