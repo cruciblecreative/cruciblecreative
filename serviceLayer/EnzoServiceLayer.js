@@ -6,7 +6,6 @@ class Visualizer {
         this.iframe = iframe;
     }
 
-
     // This is just part of the visualizer and doesn't need to return anything currently.
 
     setHighlight = function (highlight) {
@@ -17,8 +16,6 @@ class Visualizer {
             action: 'setHighlightByName',
             list: highlight
         }, '*');
-        var highlightPick = document.querySelector('#highlight-picker');
-        highlightPick.innerHTML = highlight;
         viewerIframe.postMessage({
             action: 'endTransaction'
         }, '*');
@@ -27,22 +24,19 @@ class Visualizer {
 
     /* customizer functions */
 
-    static changeGarmentView(element) {
+    changeGarmentView = function(trigger) {
+      var iframe = this.iframe;
+            var viewerIframe = iframe.contentWindow;
         viewerIframe.postMessage({
             action: 'beginTransaction'
         }, '*');
         viewerIframe.postMessage({
-            action: 'setCamera',
-            position: [1.33, 22, 0],
-            target: [-0.53, -1.25, -0.3],
-            up: [0, 1, 0],
-            transitionTime: 500,
-            fov: 30
-        }, '*');
+            action : 'triggerAnimation',
+            triggerId : trigger,
+          },'*');
         viewerIframe.postMessage({
             action: 'endTransaction'
         }, '*');
-        return element;
     }
 
     static changeGarmentFabric(material) {}
@@ -52,7 +46,7 @@ class Visualizer {
     // the element is a part of the garment, like the lapel. The variation is what will change to the element.
     static changeGarmentCustomization(element, variation) {}
 
-    visualizerEventListener = function (event) {
+    visualizerEventListener = function(event) {
         if (event.data && event.data.action == 'onStateChange') {
             if (event.data.state.viewerState == 'loaded' || event.data.state.viewerState == 'fallbackloaded') {
                 viewerActive = true;
@@ -60,11 +54,12 @@ class Visualizer {
         }
         if (event.data && event.data.action == 'onMaterialTreeHighlight') {
             console.log(event.data.materialTreesName);
-            setHighlight(event.data.materialTreesName);
+            this.setHighlight(event.data.materialTreesName);
         }
 
         if (event.data && event.data.action == 'onPolylistSelection') {
-            changeGarmentView(event.data.polylistName, [1.33, 16, 0], [-0.53, 1.05, -0.3], '#logo-options');
+          console.log(event.data.polylistName); 
+            this.changeGarmentView(1);
         }
         if (event.data && event.data.action == 'onError') {
             console.log(event);
@@ -72,17 +67,17 @@ class Visualizer {
     };
 
     init(garment) {
-        var viewerIframe = null;
+      var viewerIframe = null;
         var viewerActive = false;
         var iframe = this.iframe;
 
         iframe.onload = function () {
             viewerIframe = iframe.contentWindow;
-            window.removeEventListener('message', visualizerEventListener, false);
+            window.removeEventListener('message', this.visualizerEventListener, false);
             viewerIframe.postMessage({
                 action: 'registerCallback'
             }, '*');
-            window.addEventListener('message', visualizerEventListener, false);
+            window.addEventListener('message', this.visualizerEventListener, false);
             viewerIframe.postMessage({
                 action: 'getViewerState'
             }, '*');

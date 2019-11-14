@@ -28,13 +28,10 @@ const garment = {
             parent: {
                 id: "23iulrbqepnw9v8sngw",
                 code: "T010203",
-				display: "Lapel",
-				camera: {
-					position: [1.33,16,0],
-					target: [-0.53,1.05,-0.3]
-				},
+                display: "Lapel",
+                triggerId: 1,
                 garment: {
-                    id: "iepuwbfaw9p23f",
+                    id: "XB8C3JS904",
                     code: "02",
                     display: "Jacket",
                     allowedFabrics: [],
@@ -50,12 +47,9 @@ const garment = {
                 id: "4qt;rpinfp08q32rwea",
                 code: "T010204",
 				display: "Lapel buttonhole",
-				camera: {
-					position: [1.33,16,0],
-					target: [-0.53,1.05,-0.3]
-				},
+				triggerId: 2,
                 garment: {
-                    id: "iepuwbfaw9p23f",
+                    id: "XB8C3JS904",
                     code: "02",
                     display: "Jacket",
                     allowedFabrics: [],
@@ -117,14 +111,14 @@ The function will also call when selecting it in the customizer.
 
 ```javascript
 
-var garmentView = visualizer.changeGarmentView(garment.elements.element);
+var garmentView = visualizer.changeGarmentView(triggerId);
 ```
 
 ## Change Garment Fabric
 
 ```javascript
 
-var garmentFabric = visualizer.changeGarmentFabric(garment.material);
+var garmentFabric = visualizer.changeGarmentFabric(allowedFabrics);
 ```
 
 
@@ -134,7 +128,7 @@ Will be added soon.
 
 ```javascript
 
-var garmentLining = visualizer.changeGarmentLining(garment.material);
+var garmentLining = visualizer.changeGarmentLining(allowedLinings);
 ```
 
 ## Change Garment Customization
@@ -145,7 +139,7 @@ This will most likely occur after the user has clicked the garment and triggered
 
 ```javascript
 
-var garmentCustomization = visualizer.changeGarmentCustomization(garment.elements.element, garment.elements.variation);
+var garmentCustomization = visualizer.changeGarmentCustomization(id);
 ```
 
 # Visualizer Functions
@@ -160,96 +154,88 @@ The visualizer functions are all functions that affect the customizer. This can 
 class Visualizer {
     constructor(iframe) {
         this.iframe = iframe;
-      }
+    }
 
-    init(garment) {
-        var viewerIframe = null;
-		var viewerActive = false;
-        var iframe = this.iframe;
-        
-        iframe.onload = function() {
-			viewerIframe = iframe.contentWindow;
-			window.removeEventListener('message', visualizerEventListener ,false);
-			viewerIframe.postMessage({
-				action : 'registerCallback'
-			}, '*');
-			window.addEventListener('message', visualizerEventListener, false);
-			viewerIframe.postMessage({
-				action:'getViewerState'
-			}, '*');
-        }; 
-        
-        var visualizerEventListener = function(event){
-			if(event.data && event.data.action == 'onStateChange'){
-				if(event.data.state.viewerState == 'loaded' || event.data.state.viewerState == 'fallbackloaded'){
-					viewerActive = true;
-				}
-			}
-            if(event.data && event.data.action == 'onMaterialTreeHighlight'){
-                console.log(event.data.materialTreesName);
-                setHighlight(event.data.materialTreesName);
-            }
+    // This is just part of the visualizer and doesn't need to return anything currently.
 
-            if(event.data && event.data.action == 'onPolylistSelection'){
-                    changeGarmentView(event.data.polylistName, [1.33,16,0], [-0.53,1.05,-0.3], '#logo-options');
-            }
-			if(event.data && event.data.action == 'onError'){
-				console.log(event);
-			} 
-		};
-      
-      // This is just part of the visualizer and doesn't need to return anything currently.
-    function setHighlight(highlight) {
+    setHighlight = function (highlight) {
         viewerIframe.postMessage({
-           action : 'beginTransaction'
-         },'*');
-         viewerIframe.postMessage({
-           action : 'setHighlightByName',
-           list: highlight
-         },'*');
-         var highlightPick = document.querySelector('#highlight-picker');
-         highlightPick.innerHTML = highlight;
-         viewerIframe.postMessage({
-           action : 'endTransaction'
-         },'*');
-    }
-        var garmentID = garment.options[0].parent.garment.id;
-        iframe.src = 'https://emersya.com/showcase/'+garmentID;  // this will change when we know the full URL.
-      console.log(iframe.src);
-        return garmentID; 
+            action: 'beginTransaction'
+        }, '*');
+        viewerIframe.postMessage({
+            action: 'setHighlightByName',
+            list: highlight
+        }, '*');
+        viewerIframe.postMessage({
+            action: 'endTransaction'
+        }, '*');
     }
 
-    
 
     /* customizer functions */
 
-    static changeGarmentView(element) {
+    changeGarmentView = function(trigger) {
+      var iframe = this.iframe;
+            var viewerIframe = iframe.contentWindow;
         viewerIframe.postMessage({
-            action : 'beginTransaction'
+            action: 'beginTransaction'
+        }, '*');
+        viewerIframe.postMessage({
+            action : 'triggerAnimation',
+            triggerId : trigger,
           },'*');
         viewerIframe.postMessage({
-            action : 'setCamera',
-            position : [1.33,22,0],
-            target : [-0.53,-1.25,-0.3],
-            up : [0,1,0],
-            transitionTime : 500,
-            fov : 30
-        },'*');
-        viewerIframe.postMessage({
-            action : 'endTransaction'
-          },'*');
-        return element;
+            action: 'endTransaction'
+        }, '*');
     }
 
-    static changeGarmentFabric(material) {
-    }
+    changeGarmentFabric = function(fabric) {}
 
-    static changeGarmentLining() {
-    }
-    
+    changeGarmentLining = function(lining) {}
+
     // the element is a part of the garment, like the lapel. The variation is what will change to the element.
-    static changeGarmentCustomization(element, variation) {
+    changeGarmentCustomization = function(id) {}
+
+    visualizerEventListener = function(event) {
+        if (event.data && event.data.action == 'onStateChange') {
+            if (event.data.state.viewerState == 'loaded' || event.data.state.viewerState == 'fallbackloaded') {
+                viewerActive = true;
+            }
+        }
+        if (event.data && event.data.action == 'onMaterialTreeHighlight') {
+            this.setHighlight(event.data.materialTreesName);
+        }
+
+        if (event.data && event.data.action == 'onPolylistSelection') {
+            this.changeGarmentView(1);
+        }
+        if (event.data && event.data.action == 'onError') {
+            console.log(event);
+        }
+    };
+
+    init(garment) {
+      var viewerIframe = null;
+        var viewerActive = false;
+        var iframe = this.iframe;
+
+        iframe.onload = function () {
+            viewerIframe = iframe.contentWindow;
+            window.removeEventListener('message', this.visualizerEventListener, false);
+            viewerIframe.postMessage({
+                action: 'registerCallback'
+            }, '*');
+            window.addEventListener('message', this.visualizerEventListener, false);
+            viewerIframe.postMessage({
+                action: 'getViewerState'
+            }, '*');
+        };
+        var garmentID = garment.options[0].parent.garment.id;
+        iframe.src = 'https://emersya.com/showcase/' + garmentID; // this will change when we know the full URL.
+        console.log(iframe.src);
+        return garmentID;
     }
+
 }
 
 ```
