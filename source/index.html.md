@@ -23,19 +23,19 @@ const garment = {
     options: [
         {
             id: "3i2h145p9wgunvs",
-            code: "T01020311",
+            code: "",
             display: "Notch 6 cm / 2 3/8 in",
             parent: {
                 id: "23iulrbqepnw9v8sngw",
-                code: "T010203",
-                display: "Lapel",
+                code: "T010505",
+                display: "Button",
                 triggerId: 1,
+                allowedMaterials: ['buttons', 'buttons_white', 'buttons_red'],
+                allowedLinings: [],
                 garment: {
                     id: "XB8C3JS904",
                     code: "02",
                     display: "Jacket",
-                    allowedFabrics: [],
-                    allowedLinings: [],
                 }
             },
         },
@@ -47,13 +47,13 @@ const garment = {
                 id: "4qt;rpinfp08q32rwea",
                 code: "T010204",
 				display: "Lapel buttonhole",
-				triggerId: 2,
+                triggerId: 2,
+                allowedMaterials: [],
+                allowedLinings: [],
                 garment: {
                     id: "XB8C3JS904",
                     code: "02",
                     display: "Jacket",
-                    allowedFabrics: [],
-                    allowedLinings: [],
                 }
             },
         },
@@ -85,7 +85,7 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
  
 <!-- changeGarment - e.g. jacket, trousers, etc.
 - changeGarmentView - e.g. jacket default, jacket open/lining, jacket zoom level, etc.
-- changeGarmentFabric
+- changeGarmentMaterial
 - changeGarmentLining
 - onClick - to respond to hotspots
 - changeGarmentCustomization -->
@@ -114,21 +114,24 @@ The function will also call when selecting it in the customizer.
 var garmentView = visualizer.changeGarmentView(triggerId);
 ```
 
-## Change Garment Fabric
+## Change Garment Material
+
+i.e. fabric
 
 ```javascript
 
-var garmentFabric = visualizer.changeGarmentFabric(allowedFabrics);
+var garmentMaterial = visualizer.changeGarmentMaterial(display, material);
 ```
 
+> The customization and material are customizable seperately if the allowedMaterials affects the parent (e.g. button).
 
 ## Change Garment Lining
 
-Will be added soon.
+Will be finished once the lining of the model is made as a customizable garment part.
 
 ```javascript
 
-var garmentLining = visualizer.changeGarmentLining(allowedLinings);
+var garmentLining = visualizer.changeGarmentLining(display, lining);
 ```
 
 ## Change Garment Customization
@@ -158,25 +161,27 @@ class Visualizer {
 
     // This is just part of the visualizer and doesn't need to return anything currently.
 
-    setHighlight = function (highlight) {
+     setHighlight = function(polylist) {
+        var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
         viewerIframe.postMessage({
             action: 'beginTransaction'
-        }, '*');
+        }, '*'); 
         viewerIframe.postMessage({
             action: 'setHighlightByName',
-            list: highlight
+            list: polylist
         }, '*');
         viewerIframe.postMessage({
             action: 'endTransaction'
         }, '*');
-    }
+    } 
 
 
     /* customizer functions */
 
     changeGarmentView = function(trigger) {
-      var iframe = this.iframe;
-            var viewerIframe = iframe.contentWindow;
+        var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
         viewerIframe.postMessage({
             action: 'beginTransaction'
         }, '*');
@@ -189,50 +194,80 @@ class Visualizer {
         }, '*');
     }
 
-    changeGarmentFabric = function(fabric) {}
+    // materialSettings is formatted like 'buttons/buttons_white'
+    changeGarmentMaterial = function(display, material) {
+        var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
+        viewerIframe.postMessage({
+            action : 'beginTransaction'
+        },'*');
+        viewerIframe.postMessage({
+            action : 'setMaterialByName',
+            materialSettings : display + '/' + material,
+        },'*');
+        viewerIframe.postMessage({
+            action : 'endTransaction'
+        },'*');
+    }
 
-    changeGarmentLining = function(lining) {}
+    changeGarmentLining = function(display, lining) {
+        var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
+        viewerIframe.postMessage({
+            action : 'beginTransaction'
+        },'*');
+        viewerIframe.postMessage({
+            action : 'setMaterialByName',
+            materialSettings : display + '/' + lining,
+        },'*');
+        viewerIframe.postMessage({
+            action : 'endTransaction'
+        },'*');
+    }
 
-    // the element is a part of the garment, like the lapel. The variation is what will change to the element.
+    // This is called when you are changing the SIZE or the QUANTITY of the garment part. Such as increasing the lapel size or the quantity of buttons.
     changeGarmentCustomization = function(id) {}
 
-    visualizerEventListener = function(event) {
-        if (event.data && event.data.action == 'onStateChange') {
-            if (event.data.state.viewerState == 'loaded' || event.data.state.viewerState == 'fallbackloaded') {
-                viewerActive = true;
-            }
-        }
-        if (event.data && event.data.action == 'onMaterialTreeHighlight') {
-            this.setHighlight(event.data.materialTreesName);
-        }
-
-        if (event.data && event.data.action == 'onPolylistSelection') {
-            this.changeGarmentView(1);
-        }
-        if (event.data && event.data.action == 'onError') {
-            console.log(event);
-        }
-    };
+    
 
     init(garment) {
       var viewerIframe = null;
         var viewerActive = false;
         var iframe = this.iframe;
+      
+      var garmentID = garment.options[0].parent.garment.id;
+        iframe.src = 'https://emersya.com/showcase/' + garmentID; // this will change when we know the full URL.
+        console.log(iframe.contentWindow);
 
         iframe.onload = function () {
             viewerIframe = iframe.contentWindow;
-            window.removeEventListener('message', this.visualizerEventListener, false);
+            window.removeEventListener('message', visualizerEventListener, false);
             viewerIframe.postMessage({
                 action: 'registerCallback'
             }, '*');
-            window.addEventListener('message', this.visualizerEventListener, false);
+            window.addEventListener('message', visualizerEventListener, false);
             viewerIframe.postMessage({
                 action: 'getViewerState'
             }, '*');
         };
-        var garmentID = garment.options[0].parent.garment.id;
-        iframe.src = 'https://emersya.com/showcase/' + garmentID; // this will change when we know the full URL.
-        console.log(iframe.src);
+      
+      var visualizerEventListener = (event) => {
+        if (event.data && event.data.action == 'onStateChange') {
+            if (event.data.state.viewerState == 'loaded' || event.data.state.viewerState == 'fallbackloaded') {
+                viewerActive = true;
+            }
+        }
+        if (event.data && event.data.action == 'onPolylistHighlight') {
+           this.setHighlight(event.data.polylistName);
+        }
+
+        if (event.data && event.data.action == 'onPolylistSelection') {
+          //  this.changeGarmentView(1);
+        }
+        if (event.data && event.data.action == 'onError') {
+            console.log(event);
+        }
+    };
         return garmentID;
     }
 
