@@ -18,8 +18,10 @@ class Visualizer {
             "*"
         );
         viewerIframe.postMessage({
-                action: "setHighlightByName",
-                list: polylist
+                action: "setHighlight",
+                meshes : [],
+                configurableMaterials: [polylist],
+                configurableMaterialGroups : []
             },
             "*"
         );
@@ -91,29 +93,11 @@ class Visualizer {
             "*"
         );
         viewerIframe.postMessage({
-                action: "setMaterialByName",
-                materialSettings: display + "/" + material
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    changeGarmentLining = function(display, lining) {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "setMaterialByName",
-                materialSettings: display + "/" + lining
+                action: "setMaterials",
+                materials: [{
+                    materialVariation : material,
+		            configurableMaterial : display
+                }]
             },
             "*"
         );

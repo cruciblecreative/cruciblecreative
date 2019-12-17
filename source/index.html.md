@@ -18,6 +18,9 @@ To see an updating version of this code in action:
 
 The camera object is subject to change, now that we have access to a model.
 
+As of 7/12/19, Emersya's API has been updated, deprecating some functions. I am in the process of updating functions in this layer that no longer work. Essentially what needed a string before, is now merged into a single API function that takes an array.
+
+
 ```javascript
 const garment = {
     options: [
@@ -82,25 +85,15 @@ You must replace <code>meowmeowmeow</code> with your personal API key.
 </aside> -->
 
 # Customizer Functions
- 
-<!-- changeGarment - e.g. jacket, trousers, etc.
-- changeGarmentView - e.g. jacket default, jacket open/lining, jacket zoom level, etc.
-- changeGarmentMaterial
-- changeGarmentLining
-- onClick - to respond to hotspots
-- changeGarmentCustomization -->
 
-<aside class="warning">
-All of these functions are subject to change very quickly at this time. THEY WILL NOT BE CORRECT!
-</aside>
 
 ## Change Garment
 
-Presumably it will be a reinstantiation with a different ID. If garment state needs to at all be preserved by this service layer, let me know.
+Specify the garment's ID. This will be the same ID as the ID provided by Emersya, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.
 
 ```javascript
 
-let emersyaID = visualizer.init(garment);
+let emersyaID = visualizer.init(garmentID);
 ```
 
 ## Change Garment View
@@ -116,22 +109,15 @@ var garmentView = visualizer.changeGarmentView(triggerId);
 
 ## Change Garment Material
 
-i.e. fabric
+*changeGarmentLining has been merged with changeGarmentMaterial*
+
+Since the primary key and customizations of the garment are exclusive to 1 change per part of the garment. 
+
+In the case of something like buttons, if we need to provide a material choice as well as a quantity choice, then use `changeGarmentCustomization` to set the quantity.
 
 ```javascript
 
 var garmentMaterial = visualizer.changeGarmentMaterial(display, material);
-```
-
-> The customization and material are customizable seperately if the allowedMaterials affects the parent (e.g. button).
-
-## Change Garment Lining
-
-Will be finished once the lining of the model is made as a customizable garment part.
-
-```javascript
-
-var garmentLining = visualizer.changeGarmentLining(display, lining);
 ```
 
 ## Change Garment Customization
@@ -159,241 +145,25 @@ var garmentScreenshots = visualizer.screenshots;
 
 # Visualizer Functions
 
-The visualizer functions are all functions that affect the customizer. This can happen by clicking a highlighted part of the model. 
+The visualizer functions are all functions that affect the customizer. You can call them if you wish and trigger them manually, but the visualizer will be listening for these events and trigger them automatically.
 
+<div class="warning">You do not need to call this/these function(s).</div>
 
-# Service Layer
+## Set Highlight
+
+Accepts an array of materials to be highlighted. Pass a single configurable material to highlight only one.
 
 ```javascript
 
-class Visualizer {
-    constructor(iframe) {
-        this.iframe = iframe;
-        this.screenshots = [];
-    }
+visualizer.setHighlight(display);
 
-    // This is just part of the visualizer and doesn't need to return anything currently.
-
-    setHighlight = function(polylist) {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "setHighlightByName",
-                list: polylist
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    setTriggers = function(viewerWidth) {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        if (viewerWidth > 768) {
-            viewerIframe.postMessage({
-                    action: "hideAnimationTriggers"
-                },
-                "*"
-            );
-        } else {
-            viewerIframe.postMessage({
-                    action: "showAnimationTriggers"
-                },
-                "*"
-            );
-        }
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    /* customizer functions */
-
-    changeGarmentView = function(trigger) {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "triggerAnimation",
-                triggerId: trigger
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    // materialSettings is formatted like 'buttons/buttons_white'
-    changeGarmentMaterial = function(display, material) {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "setMaterialByName",
-                materialSettings: display + "/" + material
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    changeGarmentLining = function(display, lining) {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "setMaterialByName",
-                materialSettings: display + "/" + lining
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    // This is called when you are changing the SIZE or the QUANTITY of the garment part. Such as increasing the lapel size or the quantity of buttons.
-    changeGarmentCustomization = function(id) {};
-
-    getGarmentScreenshots = function() {
-        var iframe = this.iframe;
-        var viewerIframe = iframe.contentWindow;
-        viewerIframe.postMessage({
-                action: "beginTransaction"
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "getScreenshots",
-                width: 512,
-                height: 512,
-                takeBackground: true,
-                cameras: [{
-                        // front
-                        position: [-0.9726, 115.8661, 166.3097],
-                        target: [-0.9726, 115.8661, 0.758],
-                        up: [0, 1, 0]
-                    },
-                    {
-                        // back
-                        position: [-0.9726, 115.8661, -164.7936],
-                        target: [-0.9726, 115.8661, 0.758],
-                        up: [0, 1, 0]
-                    },
-                    {
-                        // left
-                        position: [164.579, 115.8661, 0.758],
-                        target: [-0.9726, 115.8661, 0.758],
-                        up: [0, 1, 0]
-                    },
-                    {
-                        // right
-                        position: [-166.5243, 115.8661, 0.758],
-                        target: [-0.9726, 115.8661, 0.758],
-                        up: [0, 1, 0]
-                    }
-                ]
-            },
-            "*"
-        );
-        viewerIframe.postMessage({
-                action: "endTransaction"
-            },
-            "*"
-        );
-    };
-
-    init(garment) {
-        var viewerIframe = null;
-        var viewerActive = false;
-        var iframe = this.iframe;
-        var viewerWidth = iframe.clientWidth;
-
-        var garmentID = garment.options[0].parent.garment.id;
-        iframe.src = "https://emersya.com/showcase/" + garmentID;
-
-        iframe.onload = function() {
-            viewerIframe = iframe.contentWindow;
-            window.removeEventListener("message", visualizerEventListener, false);
-            viewerIframe.postMessage({
-                    action: "registerCallback"
-                },
-                "*"
-            );
-            window.addEventListener("message", visualizerEventListener, false);
-            viewerIframe.postMessage({
-                    action: "getViewerState"
-                },
-                "*"
-            );
-        };
-
-        var visualizerEventListener = event => {
-            if (event.data && event.data.action == "onStateChange") {
-                if (
-                    event.data.state.viewerState == "loaded" ||
-                    event.data.state.viewerState == "fallbackloaded"
-                ) {
-                    viewerActive = true;
-                    this.setTriggers(viewerWidth);
-                }
-            }
-            if (event.data && event.data.action == "onPolylistHighlight") {
-                if (viewerWidth >= 768) {
-                    this.setHighlight(event.data.polylistName);
-                }
-            }
-
-            if (event.data && event.data.action == "onPolylistSelection") {
-                //  this.changeGarmentView(1);
-            }
-            if (event.data && event.data.action == "onScreenshots") {
-                this.screenshots = event.data.screenshots;
-            }
-            if (event.data && event.data.action == "onError") {
-                console.log(event);
-            }
-        };
-    }
-}
+// This should remove all highlights that were set manually.
+visualizer.setHighlight();
 
 ```
+
+# Service Layer
+
+<a href="https://github.com/cruciblecreative/cruciblecreative.github.io/blob/master/serviceLayer/EnzoServiceLayer.js" target="_blank">View here</a>
 
 

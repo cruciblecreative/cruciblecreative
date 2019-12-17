@@ -237,9 +237,6 @@
                     <a href="#change-garment-material" class="toc-h2 toc-link" data-title="Change Garment Material">Change Garment Material</a>
                   </li>
                   <li>
-                    <a href="#change-garment-lining" class="toc-h2 toc-link" data-title="Change Garment Lining">Change Garment Lining</a>
-                  </li>
-                  <li>
                     <a href="#change-garment-customization" class="toc-h2 toc-link" data-title="Change Garment Customization">Change Garment Customization</a>
                   </li>
                   <li>
@@ -249,6 +246,11 @@
           </li>
           <li>
             <a href="#visualizer-functions" class="toc-h1 toc-link" data-title="Visualizer Functions">Visualizer Functions</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#set-highlight" class="toc-h2 toc-link" data-title="Set Highlight">Set Highlight</a>
+                  </li>
+              </ul>
           </li>
           <li>
             <a href="#service-layer" class="toc-h1 toc-link" data-title="Service Layer">Service Layer</a>
@@ -267,6 +269,8 @@
 <a href="https://codepen.io/kylegriffin/pen/qBBoQGr?editors=1011">Codepen</a></p>
 
 <p>The camera object is subject to change, now that we have access to a model.</p>
+
+<p>As of 7/12/19, Emersya&#39;s API has been updated, deprecating some functions. I am in the process of updating functions in this layer that no longer work. Essentially what needed a string before, is now merged into a single API function that takes an array.</p>
 <pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">garment</span> <span class="o">=</span> <span class="p">{</span>
     <span class="na">options</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
@@ -324,21 +328,10 @@
 <!-- <aside class="notice">
 You must replace <code>meowmeowmeow</code> with your personal API key.
 </aside> -->
-<h1 id='customizer-functions'>Customizer Functions</h1>
-<!-- changeGarment - e.g. jacket, trousers, etc.
-- changeGarmentView - e.g. jacket default, jacket open/lining, jacket zoom level, etc.
-- changeGarmentMaterial
-- changeGarmentLining
-- onClick - to respond to hotspots
-- changeGarmentCustomization -->
-
-<aside class="warning">
-All of these functions are subject to change very quickly at this time. THEY WILL NOT BE CORRECT!
-</aside>
-<h2 id='change-garment'>Change Garment</h2>
-<p>Presumably it will be a reinstantiation with a different ID. If garment state needs to at all be preserved by this service layer, let me know.</p>
+<h1 id='customizer-functions'>Customizer Functions</h1><h2 id='change-garment'>Change Garment</h2>
+<p>Specify the garment&#39;s ID. This will be the same ID as the ID provided by Emersya, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.</p>
 <pre class="highlight javascript tab-javascript"><code>
-<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garment</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garmentID</span><span class="p">);</span>
 </code></pre><h2 id='change-garment-view'>Change Garment View</h2>
 <p>Some garments will have actionable points that will affect the model. An example is a suit jacket being clicked to open and reveal the inner lining.</p>
 
@@ -346,17 +339,13 @@ All of these functions are subject to change very quickly at this time. THEY WIL
 <pre class="highlight javascript tab-javascript"><code>
 <span class="kd">var</span> <span class="nx">garmentView</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">changeGarmentView</span><span class="p">(</span><span class="nx">triggerId</span><span class="p">);</span>
 </code></pre><h2 id='change-garment-material'>Change Garment Material</h2>
-<p>i.e. fabric</p>
+<p><em>changeGarmentLining has been merged with changeGarmentMaterial</em></p>
+
+<p>Since the primary key and customizations of the garment are exclusive to 1 change per part of the garment. </p>
+
+<p>In the case of something like buttons, if we need to provide a material choice as well as a quantity choice, then use <code>changeGarmentCustomization</code> to set the quantity.</p>
 <pre class="highlight javascript tab-javascript"><code>
 <span class="kd">var</span> <span class="nx">garmentMaterial</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">changeGarmentMaterial</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="nx">material</span><span class="p">);</span>
-</code></pre>
-<blockquote>
-<p>The customization and material are customizable seperately if the allowedMaterials affects the parent (e.g. button).</p>
-</blockquote>
-<h2 id='change-garment-lining'>Change Garment Lining</h2>
-<p>Will be finished once the lining of the model is made as a customizable garment part.</p>
-<pre class="highlight javascript tab-javascript"><code>
-<span class="kd">var</span> <span class="nx">garmentLining</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">changeGarmentLining</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="nx">lining</span><span class="p">);</span>
 </code></pre><h2 id='change-garment-customization'>Change Garment Customization</h2>
 <p>To change the garment&#39;s variant of the part of the garment. E.g. changing the width of the lapel.</p>
 
@@ -370,237 +359,20 @@ All of these functions are subject to change very quickly at this time. THEY WIL
 
 <span class="kd">var</span> <span class="nx">garmentScreenshots</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">screenshots</span><span class="p">;</span>
 </code></pre><h1 id='visualizer-functions'>Visualizer Functions</h1>
-<p>The visualizer functions are all functions that affect the customizer. This can happen by clicking a highlighted part of the model. </p>
-<h1 id='service-layer'>Service Layer</h1><pre class="highlight javascript tab-javascript"><code>
-<span class="kr">class</span> <span class="nx">Visualizer</span> <span class="p">{</span>
-    <span class="nx">constructor</span><span class="p">(</span><span class="nx">iframe</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">;</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">screenshots</span> <span class="o">=</span> <span class="p">[];</span>
-    <span class="p">}</span>
+<p>The visualizer functions are all functions that affect the customizer. You can call them if you wish and trigger them manually, but the visualizer will be listening for these events and trigger them automatically.</p>
 
-    <span class="c1">// This is just part of the visualizer and doesn't need to return anything currently.</span>
+<div class="warning">You do not need to call this/these function(s).</div>
+<h2 id='set-highlight'>Set Highlight</h2>
+<p>Accepts an array of materials to be highlighted. Pass a single configurable material to highlight only one.</p>
+<pre class="highlight javascript tab-javascript"><code>
+<span class="nx">visualizer</span><span class="p">.</span><span class="nx">setHighlight</span><span class="p">(</span><span class="nx">display</span><span class="p">);</span>
 
-    <span class="nx">setHighlight</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">polylist</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"beginTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"setHighlightByName"</span><span class="p">,</span>
-                <span class="na">list</span><span class="p">:</span> <span class="nx">polylist</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"endTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-    <span class="p">};</span>
+<span class="c1">// This should remove all highlights that were set manually.</span>
+<span class="nx">visualizer</span><span class="p">.</span><span class="nx">setHighlight</span><span class="p">();</span>
 
-    <span class="nx">setTriggers</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">viewerWidth</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"beginTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">viewerWidth</span> <span class="o">&gt;</span> <span class="mi">768</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                    <span class="na">action</span><span class="p">:</span> <span class="s2">"hideAnimationTriggers"</span>
-                <span class="p">},</span>
-                <span class="s2">"*"</span>
-            <span class="p">);</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                    <span class="na">action</span><span class="p">:</span> <span class="s2">"showAnimationTriggers"</span>
-                <span class="p">},</span>
-                <span class="s2">"*"</span>
-            <span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"endTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-    <span class="p">};</span>
+</code></pre><h1 id='service-layer'>Service Layer</h1>
+<p><a href="https://github.com/cruciblecreative/cruciblecreative.github.io/blob/master/serviceLayer/EnzoServiceLayer.js" target="_blank">View here</a></p>
 
-    <span class="cm">/* customizer functions */</span>
-
-    <span class="nx">changeGarmentView</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">trigger</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"beginTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"triggerAnimation"</span><span class="p">,</span>
-                <span class="na">triggerId</span><span class="p">:</span> <span class="nx">trigger</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"endTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-    <span class="p">};</span>
-
-    <span class="c1">// materialSettings is formatted like 'buttons/buttons_white'</span>
-    <span class="nx">changeGarmentMaterial</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="nx">material</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"beginTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"setMaterialByName"</span><span class="p">,</span>
-                <span class="na">materialSettings</span><span class="p">:</span> <span class="nx">display</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="nx">material</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"endTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-    <span class="p">};</span>
-
-    <span class="nx">changeGarmentLining</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">display</span><span class="p">,</span> <span class="nx">lining</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"beginTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"setMaterialByName"</span><span class="p">,</span>
-                <span class="na">materialSettings</span><span class="p">:</span> <span class="nx">display</span> <span class="o">+</span> <span class="s2">"/"</span> <span class="o">+</span> <span class="nx">lining</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"endTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-    <span class="p">};</span>
-
-    <span class="c1">// This is called when you are changing the SIZE or the QUANTITY of the garment part. Such as increasing the lapel size or the quantity of buttons.</span>
-    <span class="nx">changeGarmentCustomization</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{};</span>
-
-    <span class="nx">getGarmentScreenshots</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"beginTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"getScreenshots"</span><span class="p">,</span>
-                <span class="na">width</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
-                <span class="na">height</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
-                <span class="na">takeBackground</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="na">cameras</span><span class="p">:</span> <span class="p">[{</span>
-                        <span class="c1">// front</span>
-                        <span class="na">position</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9726</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">166.3097</span><span class="p">],</span>
-                        <span class="na">target</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9726</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">0.758</span><span class="p">],</span>
-                        <span class="na">up</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                    <span class="p">},</span>
-                    <span class="p">{</span>
-                        <span class="c1">// back</span>
-                        <span class="na">position</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9726</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="o">-</span><span class="mf">164.7936</span><span class="p">],</span>
-                        <span class="na">target</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9726</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">0.758</span><span class="p">],</span>
-                        <span class="na">up</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                    <span class="p">},</span>
-                    <span class="p">{</span>
-                        <span class="c1">// left</span>
-                        <span class="na">position</span><span class="p">:</span> <span class="p">[</span><span class="mf">164.579</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">0.758</span><span class="p">],</span>
-                        <span class="na">target</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9726</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">0.758</span><span class="p">],</span>
-                        <span class="na">up</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                    <span class="p">},</span>
-                    <span class="p">{</span>
-                        <span class="c1">// right</span>
-                        <span class="na">position</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">166.5243</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">0.758</span><span class="p">],</span>
-                        <span class="na">target</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.9726</span><span class="p">,</span> <span class="mf">115.8661</span><span class="p">,</span> <span class="mf">0.758</span><span class="p">],</span>
-                        <span class="na">up</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-                    <span class="p">}</span>
-                <span class="p">]</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-        <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                <span class="na">action</span><span class="p">:</span> <span class="s2">"endTransaction"</span>
-            <span class="p">},</span>
-            <span class="s2">"*"</span>
-        <span class="p">);</span>
-    <span class="p">};</span>
-
-    <span class="nx">init</span><span class="p">(</span><span class="nx">garment</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerActive</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">iframe</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">viewerWidth</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">clientWidth</span><span class="p">;</span>
-
-        <span class="kd">var</span> <span class="nx">garmentID</span> <span class="o">=</span> <span class="nx">garment</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">parent</span><span class="p">.</span><span class="nx">garment</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
-        <span class="nx">iframe</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="s2">"https://emersya.com/showcase/"</span> <span class="o">+</span> <span class="nx">garmentID</span><span class="p">;</span>
-
-        <span class="nx">iframe</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="nx">viewerIframe</span> <span class="o">=</span> <span class="nx">iframe</span><span class="p">.</span><span class="nx">contentWindow</span><span class="p">;</span>
-            <span class="nb">window</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s2">"message"</span><span class="p">,</span> <span class="nx">visualizerEventListener</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-            <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                    <span class="na">action</span><span class="p">:</span> <span class="s2">"registerCallback"</span>
-                <span class="p">},</span>
-                <span class="s2">"*"</span>
-            <span class="p">);</span>
-            <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"message"</span><span class="p">,</span> <span class="nx">visualizerEventListener</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-            <span class="nx">viewerIframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">({</span>
-                    <span class="na">action</span><span class="p">:</span> <span class="s2">"getViewerState"</span>
-                <span class="p">},</span>
-                <span class="s2">"*"</span>
-            <span class="p">);</span>
-        <span class="p">};</span>
-
-        <span class="kd">var</span> <span class="nx">visualizerEventListener</span> <span class="o">=</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span> <span class="o">==</span> <span class="s2">"onStateChange"</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">viewerState</span> <span class="o">==</span> <span class="s2">"loaded"</span> <span class="o">||</span>
-                    <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">viewerState</span> <span class="o">==</span> <span class="s2">"fallbackloaded"</span>
-                <span class="p">)</span> <span class="p">{</span>
-                    <span class="nx">viewerActive</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">setTriggers</span><span class="p">(</span><span class="nx">viewerWidth</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span> <span class="o">==</span> <span class="s2">"onPolylistHighlight"</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">viewerWidth</span> <span class="o">&gt;=</span> <span class="mi">768</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="p">.</span><span class="nx">setHighlight</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">polylistName</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-
-            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span> <span class="o">==</span> <span class="s2">"onPolylistSelection"</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">//  this.changeGarmentView(1);</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span> <span class="o">==</span> <span class="s2">"onScreenshots"</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">screenshots</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">screenshots</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span> <span class="o">&amp;&amp;</span> <span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span> <span class="o">==</span> <span class="s2">"onError"</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">};</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-</code></pre>
       </div>
       <div class="dark-box">
           <div class="lang-selector">
