@@ -22,46 +22,24 @@ As of 7/12/19, Emersya's API has been updated, deprecating some functions. I am 
 
 
 ```javascript
-const garment = {
-    options: [
-        {
-            id: "3i2h145p9wgunvs",
-            code: "",
-            display: "Notch 6 cm / 2 3/8 in",
-            parent: {
-                id: "23iulrbqepnw9v8sngw",
-                code: "T010505",
-                display: "Button",
-                triggerId: 1,
-                allowedMaterials: ['buttons', 'buttons_white', 'buttons_red'],
-                allowedLinings: [],
-                garment: {
-                    id: "FE8BCEEPXQ",
-                    code: "02",
-                    display: "Jacket",
-                }
-            },
-        },
-        {
-            id: "gailuwdnsfsd",
-            code: "T01020401",
-            display: "Left",
-            parent: {
-                id: "4qt;rpinfp08q32rwea",
-                code: "T010204",
-				display: "Lapel buttonhole",
-                triggerId: 2,
-                allowedMaterials: [],
-                allowedLinings: [],
-                garment: {
-                    id: "FE8BCEEPXQ",
-                    code: "02",
-                    display: "Jacket",
-                }
-            },
-        },
-    ],
-}
+
+// Example currentGarment with data.
+const currentGarment = [
+    view: {
+        combination: "TU0101", 
+        component: "T010203",
+        latestOptionSelected: "T01020325",
+    },
+    garment: {
+        id: "02",  
+        subCategory: "Half Canvas",
+        options: {
+            fabrics_group: "12107",
+            linings_group: "12102",
+            "T010203": "T01020325",
+        }
+    }
+]
 ```
 
 
@@ -69,27 +47,25 @@ const garment = {
 
 My understanding is that if the customizer retains settings from previous garments, then reinstantiating the viewer by selecting a new garment will preserve the previous state if the user returns to that garment.
 
+garmentID refers to the unique id stored in the garment object above. This will be referenced with a static object of values to get the correct ID of the iframe on Emersya. 
+
 > To initialize, use this code:
 
 ```javascript
 const visualizer = new Visualizer(document.querySelector('#emersyaIframe'));
 
-let emersyaID = visualizer.init(garment);
+let emersyaID = visualizer.init(garmentID, currentGarment);
 ```
 
 > '#emersyaIframe' can be whatever you would prefer the id of the iframe to be.
 
-
-<!-- <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside> -->
 
 # Customizer Functions
 
 
 ## Change Garment
 
-Specify the garment's ID. This will be the same ID as the ID provided by Emersya, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.
+Specify the garment's ID. This will be the same as g, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.
 
 ```javascript
 

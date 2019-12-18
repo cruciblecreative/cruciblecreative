@@ -271,65 +271,41 @@
 <p>The camera object is subject to change, now that we have access to a model.</p>
 
 <p>As of 7/12/19, Emersya&#39;s API has been updated, deprecating some functions. I am in the process of updating functions in this layer that no longer work. Essentially what needed a string before, is now merged into a single API function that takes an array.</p>
-<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">garment</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">options</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="na">id</span><span class="p">:</span> <span class="s2">"3i2h145p9wgunvs"</span><span class="p">,</span>
-            <span class="na">code</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
-            <span class="na">display</span><span class="p">:</span> <span class="s2">"Notch 6 cm / 2 3/8 in"</span><span class="p">,</span>
-            <span class="na">parent</span><span class="p">:</span> <span class="p">{</span>
-                <span class="na">id</span><span class="p">:</span> <span class="s2">"23iulrbqepnw9v8sngw"</span><span class="p">,</span>
-                <span class="na">code</span><span class="p">:</span> <span class="s2">"T010505"</span><span class="p">,</span>
-                <span class="na">display</span><span class="p">:</span> <span class="s2">"Button"</span><span class="p">,</span>
-                <span class="na">triggerId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="na">allowedMaterials</span><span class="p">:</span> <span class="p">[</span><span class="s1">'buttons'</span><span class="p">,</span> <span class="s1">'buttons_white'</span><span class="p">,</span> <span class="s1">'buttons_red'</span><span class="p">],</span>
-                <span class="na">allowedLinings</span><span class="p">:</span> <span class="p">[],</span>
-                <span class="na">garment</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="na">id</span><span class="p">:</span> <span class="s2">"FE8BCEEPXQ"</span><span class="p">,</span>
-                    <span class="na">code</span><span class="p">:</span> <span class="s2">"02"</span><span class="p">,</span>
-                    <span class="na">display</span><span class="p">:</span> <span class="s2">"Jacket"</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-        <span class="p">},</span>
-        <span class="p">{</span>
-            <span class="na">id</span><span class="p">:</span> <span class="s2">"gailuwdnsfsd"</span><span class="p">,</span>
-            <span class="na">code</span><span class="p">:</span> <span class="s2">"T01020401"</span><span class="p">,</span>
-            <span class="na">display</span><span class="p">:</span> <span class="s2">"Left"</span><span class="p">,</span>
-            <span class="na">parent</span><span class="p">:</span> <span class="p">{</span>
-                <span class="na">id</span><span class="p">:</span> <span class="s2">"4qt;rpinfp08q32rwea"</span><span class="p">,</span>
-                <span class="na">code</span><span class="p">:</span> <span class="s2">"T010204"</span><span class="p">,</span>
-                <span class="na">display</span><span class="p">:</span> <span class="s2">"Lapel buttonhole"</span><span class="p">,</span>
-                <span class="na">triggerId</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-                <span class="na">allowedMaterials</span><span class="p">:</span> <span class="p">[],</span>
-                <span class="na">allowedLinings</span><span class="p">:</span> <span class="p">[],</span>
-                <span class="na">garment</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="na">id</span><span class="p">:</span> <span class="s2">"FE8BCEEPXQ"</span><span class="p">,</span>
-                    <span class="na">code</span><span class="p">:</span> <span class="s2">"02"</span><span class="p">,</span>
-                    <span class="na">display</span><span class="p">:</span> <span class="s2">"Jacket"</span><span class="p">,</span>
-                <span class="p">}</span>
-            <span class="p">},</span>
-        <span class="p">},</span>
-    <span class="p">],</span>
-<span class="p">}</span>
+<pre class="highlight javascript tab-javascript"><code>
+<span class="c1">// Example currentGarment with data.</span>
+<span class="kr">const</span> <span class="nx">currentGarment</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nx">view</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nl">combination</span><span class="p">:</span> <span class="s2">"TU0101"</span><span class="p">,</span> 
+        <span class="nx">component</span><span class="p">:</span> <span class="s2">"T010203"</span><span class="p">,</span>
+        <span class="nx">latestOptionSelected</span><span class="p">:</span> <span class="s2">"T01020325"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="nx">garment</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nl">id</span><span class="p">:</span> <span class="s2">"02"</span><span class="p">,</span>  
+        <span class="nx">subCategory</span><span class="p">:</span> <span class="s2">"Half Canvas"</span><span class="p">,</span>
+        <span class="nx">options</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nl">fabrics_group</span><span class="p">:</span> <span class="s2">"12107"</span><span class="p">,</span>
+            <span class="nx">linings_group</span><span class="p">:</span> <span class="s2">"12102"</span><span class="p">,</span>
+            <span class="s2">"T010203"</span><span class="p">:</span> <span class="s2">"T01020325"</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span>
 </code></pre><h1 id='instantiating-the-visualizer'>Instantiating the Visualizer</h1>
 <p>My understanding is that if the customizer retains settings from previous garments, then reinstantiating the viewer by selecting a new garment will preserve the previous state if the user returns to that garment.</p>
+
+<p>garmentID refers to the unique id stored in the garment object above. This will be referenced with a static object of values to get the correct ID of the iframe on Emersya. </p>
 
 <blockquote>
 <p>To initialize, use this code:</p>
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">visualizer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Visualizer</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#emersyaIframe'</span><span class="p">));</span>
 
-<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garment</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garmentID</span><span class="p">,</span> <span class="nx">currentGarment</span><span class="p">);</span>
 </code></pre>
 <blockquote>
 <p>&#39;#emersyaIframe&#39; can be whatever you would prefer the id of the iframe to be.</p>
 </blockquote>
-
-<!-- <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside> -->
 <h1 id='customizer-functions'>Customizer Functions</h1><h2 id='change-garment'>Change Garment</h2>
-<p>Specify the garment&#39;s ID. This will be the same ID as the ID provided by Emersya, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.</p>
+<p>Specify the garment&#39;s ID. This will be the same as g, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.</p>
 <pre class="highlight javascript tab-javascript"><code>
 <span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garmentID</span><span class="p">);</span>
 </code></pre><h2 id='change-garment-view'>Change Garment View</h2>

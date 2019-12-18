@@ -5,6 +5,7 @@ class Visualizer {
     constructor(iframe) {
         this.iframe = iframe;
         this.screenshots = [];
+        this.garmentState = [];
     }
 
     // This is just part of the visualizer and doesn't need to return anything currently.
@@ -159,14 +160,47 @@ class Visualizer {
         );
     };
 
-    init(garment) {
+    update(newCustomizerState) {
+        // We want to take the updated state and compare it with that stored in garmentState.
+        var newState = newCustomizerState;
+        var currentState = this.garmentState;
+
+        // run through the options object and trigger functions based the difference from the current state. It should be a single new options value added or removed.
+        var newStateOptions = newState.garment.options;
+        var currentStateOptions = currentState.garment.options;
+
+        /* 
+        Check new object list for (in order):
+        - A new key. If new key exists that isn't in the current state, add it.
+        - If the key exists but it's VALUE is not different, update it.
+        - If a key no longer exits, remove it.
+        */
+
+        // If key is changed or new, set or add the new option, then trigger the customization.
+        Object.keys(newStateOptions).forEach((newOption, index) => {
+            if (newOption == currentStateOptions[index]) {}
+            if (newOption != currentStateOptions[index]) {}
+        });
+
+
+
+        // We want this to happen last.
+        // this.garmentState = newState;
+    }
+
+    init(garmentID, currentGarment) {
         var viewerIframe = null;
         var viewerActive = false;
         var iframe = this.iframe;
         var viewerWidth = iframe.clientWidth;
 
-        var garmentID = garment.options[0].parent.garment.id;
-        iframe.src = "https://emersya.com/showcase/" + garmentID;
+        // We will add more to this list as more models are completed.
+        var iframeMap = [{
+            02: 'RBIMG1MF79',
+        }];
+        var iframeID = iframeMap[garmentID];
+
+        iframe.src = "https://emersya.com/showcase/" + iframeID;
 
         iframe.onload = function() {
             viewerIframe = iframe.contentWindow;
@@ -182,8 +216,11 @@ class Visualizer {
                 },
                 "*"
             );
+            // add the initial state to the visualizer
+            this.garmentState = currentGarment;
         };
 
+        // This is how emersya prefers it's listener structured
         var visualizerEventListener = event => {
             if (event.data && event.data.action == "onStateChange") {
                 if (
