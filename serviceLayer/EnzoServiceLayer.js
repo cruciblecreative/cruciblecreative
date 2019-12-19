@@ -165,31 +165,50 @@ class Visualizer {
         var newState = newCustomizerState;
         var currentState = this.garmentState;
 
-        // run through the options object and trigger functions based the difference from the current state. It should be a single new options value added or removed.
+        // do a quick check if update is being called when it doesn't need to. 
+        // However, both objects must be identical in order, so it may not work with push/pop
+        if (JSON.stringify(newState) == JSON.stringify(currentState)) {
+            console.log("update called when the current state is already up to date");
+            return;
+        }
+
+        // run through the options object and trigger functions based the difference from the current state.
         var newStateOptions = newState.garment.options;
         var currentStateOptions = currentState.garment.options;
+        
+        var newStateOptionsKeys = Object.keys(newStateOptions);
+        var currentStateOptionsKeys = Object.keys(currentStateOptions);
+
 
         /* 
         Check new object list for (in order):
         - A new key. If new key exists that isn't in the current state, add it.
-        - If the key exists but it's VALUE is not different, update it.
-        - If a key no longer exits, remove it.
+        - If the key exists but it's VALUE is different, update it.
+        - If a key no longer exists, remove it.
         */
 
-        // If key is changed or new, set or add the new option, then trigger the customization.
-        Object.keys(newStateOptions).forEach((newOption, index) => {
+        
 
-        // check if object key already exists 
-        if (newOption in currentStateOptions) {
-            // check if value is the same.
-            if (newOption ) {}
-        } else {
-            
-        }
+        // loop through each key
+        // if is changed or new, set or add the new option, then trigger the customization.
+        newStateOptionsKeys.forEach((newKey, newIndex) => {
+
+            // find if the new key does not currently exist. If this is new, then it will be the new change clicked in the customizer.
+            if (currentStateOptionsKeys.indexOf(newKey) == -1) {
+
+                // this should work once the ids match up in Emersya
+                this.changeGarmentMaterial(newKey, newStateOptions[newKey]);
+
+                // This should set the key and value
+                currentStateOptions[newKey] = newStateOptions[newKey];
+            }
+
+            // Loop through the current state as it's currently an array of keys. Ignore this for now as it will be used soon.
+            currentStateOptionsKeys.forEach((currentKey, curIndex) => {
+                
+            });
 
         });
-
-
 
         // We want this to happen last.
         // this.garmentState = newState;
@@ -239,13 +258,13 @@ class Visualizer {
                     this.setTriggers(viewerWidth);
                 }
             }
-            if (event.data && event.data.action == "onPolylistHighlight") {
+            if (event.data && event.data.action == "onConfigurableMaterialHighlight") {
                 if (viewerWidth >= 768) {
                     this.setHighlight(event.data.polylistName);
                 }
             }
 
-            if (event.data && event.data.action == "onPolylistSelection") {
+            if (event.data && event.data.action == "onConfigurableMaterialHighlight") {
                 //  this.changeGarmentView(1);
             }
             if (event.data && event.data.action == "onScreenshots") {
