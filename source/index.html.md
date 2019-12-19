@@ -54,22 +54,36 @@ garmentID refers to the unique id stored in the garment object above. This will 
 ```javascript
 const visualizer = new Visualizer(document.querySelector('#emersyaIframe'));
 
-let emersyaID = visualizer.init(garmentID, currentGarment);
+visualizer.init(currentGarment);
 ```
 
 > '#emersyaIframe' can be whatever you would prefer the id of the iframe to be.
 
+# The Update function
 
-# Customizer Functions
+Added as of 18/12/19. This will be the primary way to interact with the service layer. The update function accepts an object (such as currentGarment above) and compares it to the object currently held in `garmentState` which is set by the visualizer when it was initialized. If the data is structured as it is above, it will be able to find the `options` object in `garment`.
 
-
-## Change Garment
-
-Specify the garment's ID. This will be the same as g, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.
+Whether you update `currentGarment` or you pass in a new version, it will attempt to update it's held object values to match the new. 
 
 ```javascript
 
-let emersyaID = visualizer.init(garmentID);
+visualizer.update(currentGarment);
+
+
+```
+
+
+# Customizer Functions
+
+For when you want to call the functions yourself. Update will utilise these functions automatically, however some functions such as `getGarmentScreenshots` will need to be called manually.
+
+## Change Garment
+
+Specify the garment's ID, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.
+
+```javascript
+
+let emersyaID = visualizer.init(currentGarment);
 ```
 
 ## Change Garment View

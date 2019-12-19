@@ -178,8 +178,15 @@ class Visualizer {
 
         // If key is changed or new, set or add the new option, then trigger the customization.
         Object.keys(newStateOptions).forEach((newOption, index) => {
-            if (newOption == currentStateOptions[index]) {}
-            if (newOption != currentStateOptions[index]) {}
+
+        // check if object key already exists 
+        if (newOption in currentStateOptions) {
+            // check if value is the same.
+            if (newOption ) {}
+        } else {
+            
+        }
+
         });
 
 
@@ -188,7 +195,7 @@ class Visualizer {
         // this.garmentState = newState;
     }
 
-    init(garmentID, currentGarment) {
+    init(currentGarment) {
         var viewerIframe = null;
         var viewerActive = false;
         var iframe = this.iframe;
@@ -198,10 +205,11 @@ class Visualizer {
         var iframeMap = [{
             02: 'RBIMG1MF79',
         }];
-        var iframeID = iframeMap[garmentID];
+        var iframeID = currentGarment.garment.id;
 
-        iframe.src = "https://emersya.com/showcase/" + iframeID;
-
+        if (iframeID in iframeMap == true) {
+        iframe.src = "https://emersya.com/showcase/" + iframeMap.iframeID;
+        }
         iframe.onload = function() {
             viewerIframe = iframe.contentWindow;
             window.removeEventListener("message", visualizerEventListener, false);

@@ -225,6 +225,9 @@
             <a href="#instantiating-the-visualizer" class="toc-h1 toc-link" data-title="Instantiating the Visualizer">Instantiating the Visualizer</a>
           </li>
           <li>
+            <a href="#the-update-function" class="toc-h1 toc-link" data-title="The Update function">The Update function</a>
+          </li>
+          <li>
             <a href="#customizer-functions" class="toc-h1 toc-link" data-title="Customizer Functions">Customizer Functions</a>
               <ul class="toc-list-h2">
                   <li>
@@ -299,15 +302,25 @@
 </blockquote>
 <pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">visualizer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Visualizer</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'#emersyaIframe'</span><span class="p">));</span>
 
-<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garmentID</span><span class="p">,</span> <span class="nx">currentGarment</span><span class="p">);</span>
+<span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">currentGarment</span><span class="p">);</span>
 </code></pre>
 <blockquote>
 <p>&#39;#emersyaIframe&#39; can be whatever you would prefer the id of the iframe to be.</p>
 </blockquote>
-<h1 id='customizer-functions'>Customizer Functions</h1><h2 id='change-garment'>Change Garment</h2>
-<p>Specify the garment&#39;s ID. This will be the same as g, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.</p>
+<h1 id='the-update-function'>The Update function</h1>
+<p>Added as of 18/12/19. This will be the primary way to interact with the service layer. The update function accepts an object (such as currentGarment above) and compares it to the object currently held in <code>garmentState</code> which is set by the visualizer when it was initialized. If the data is structured as it is above, it will be able to find the <code>options</code> object in <code>garment</code>.</p>
+
+<p>Whether you update <code>currentGarment</code> or you pass in a new version, it will attempt to update it&#39;s held object values to match the new. </p>
 <pre class="highlight javascript tab-javascript"><code>
-<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">garmentID</span><span class="p">);</span>
+<span class="nx">visualizer</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">currentGarment</span><span class="p">);</span>
+
+
+</code></pre><h1 id='customizer-functions'>Customizer Functions</h1>
+<p>For when you want to call the functions yourself. Update will utilise these functions automatically, however some functions such as <code>getGarmentScreenshots</code> will need to be called manually.</p>
+<h2 id='change-garment'>Change Garment</h2>
+<p>Specify the garment&#39;s ID, which we will have set in stone once all the finalised models are added. At this moment in time, the ID used for each garment is not editable.</p>
+<pre class="highlight javascript tab-javascript"><code>
+<span class="kd">let</span> <span class="nx">emersyaID</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="nx">currentGarment</span><span class="p">);</span>
 </code></pre><h2 id='change-garment-view'>Change Garment View</h2>
 <p>Some garments will have actionable points that will affect the model. An example is a suit jacket being clicked to open and reveal the inner lining.</p>
 
