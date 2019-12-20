@@ -24,7 +24,7 @@ As of 7/12/19, Emersya's API has been updated, deprecating some functions. I am 
 ```javascript
 
 // Example currentGarment with data.
-const currentGarment = [
+const currentGarment = {
     view: {
         combination: "TU0101", 
         component: "T010203",
@@ -39,7 +39,7 @@ const currentGarment = [
             "T010203": "T01020325",
         }
     }
-]
+};
 ```
 
 

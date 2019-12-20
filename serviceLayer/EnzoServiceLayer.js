@@ -1,10 +1,8 @@
-/* currently a multitude of scope related issues as I'm forming the function at this point in time */
-
-
 class Visualizer {
     constructor(iframe) {
         this.iframe = iframe;
         this.screenshots = [];
+        this.initialState = [];
         this.garmentState = [];
     }
 
@@ -104,7 +102,7 @@ class Visualizer {
         );
     };
 
-    // materialSettings is formatted like 'buttons/buttons_white'
+    
     changeGarmentMaterial = function(display, material) {
         var iframe = this.iframe;
         var viewerIframe = iframe.contentWindow;
@@ -180,7 +178,27 @@ class Visualizer {
         );
     };
 
+    getInitialMaterials() {
+      var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
+         viewerIframe.postMessage({
+            action: "beginTransaction"
+        },
+        "*"
+        );
+        viewerIframe.postMessage({
+            action : 'getCurrentMaterials'
+        }, '*');
+        viewerIframe.postMessage({
+            action: "endTransaction"
+        },
+        "*"
+    );
+    }
+
     update(newCustomizerState) {
+      var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
         // We want to take the updated state and compare it with that stored in garmentState.
         var newState = newCustomizerState;
         var currentState = this.garmentState;
@@ -206,9 +224,7 @@ class Visualizer {
         - If the key exists but it's VALUE is different, update it.
         - If a key no longer exists, remove it.
         */
-
-        
-
+        +`  ```                         ``
         // loop through each key
         // if is changed or new, set or add the new option, then trigger the customization.
         newStateOptionsKeys.forEach((newKey, newIndex) => {
@@ -235,7 +251,16 @@ class Visualizer {
                 
                 // if the current key index does not exist in the new state. That means something in the customizer has been undone/removed
                 if (newStateOptionsKeys.includes(currentKey) == false) {
-                    // Will be looking to see how we can implement this through Emersya's API.
+
+                    // get the current key in the initial state. They *should* match.
+                    var initMaterials = this.initialState.materialVariantConfiguration;
+
+                    // Loop through the initial settings and find where we need to reset the customization back to default.
+                    initMaterials.forEach(material => {
+                        if (material.configurableMaterial == currentKey) {
+                            this.changeGarmentMaterial(currentKey, material.materialVariation);
+                        }
+                    });
                 }
             });
 
@@ -247,7 +272,7 @@ class Visualizer {
 
     // like visualizerEventListener but needs to return where the user clicked.
     subscribe = () => {
-        
+
     }
 
     init(currentGarment) {
@@ -257,13 +282,12 @@ class Visualizer {
         var viewerWidth = iframe.clientWidth;
 
         // We will add more to this list as more models are completed.
-        var iframeMap = [{
-            02: 'RBIMG1MF79',
-        }];
+        var iframeMap = {
+            '02': 'RBIMG1MF79',
+        };
         var iframeID = currentGarment.garment.id;
-
-        if (iframeID in iframeMap == true) {
-        iframe.src = "https://emersya.com/showcase/" + iframeMap.iframeID;
+        if (Object.keys(iframeMap).indexOf(iframeID) >= 0) {
+          iframe.src = "https://emersya.com/showcase/" + iframeMap[iframeID];
         }
         iframe.onload = function() {
             viewerIframe = iframe.contentWindow;
@@ -290,11 +314,17 @@ class Visualizer {
                 ) {
                     viewerActive = true;
                     this.setTriggers(viewerWidth);
+                    this.getInitialMaterials();
                 }
+            }
+            if (event.data && event.data.action == "onCurrentMaterialsConfigurationGet") {
+                this.initialState = event.data.materialVariantConfiguration;
             }
             if (event.data && event.data.action == "onConfigurableMaterialHighlight") {
                 if (viewerWidth >= 768) {
-                    this.setHighlight(event.data.configurableMaterialsName);
+                  if (event.data.configurableMaterialsName.length) {
+                    this.setHighlight(event.data.configurableMaterialsName[0]);
+                  }
                 }
             }
             if (event.data && event.data.action == "onScreenshots") {
