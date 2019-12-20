@@ -245,6 +245,7 @@ class Visualizer {
                     this.changeGarmentMaterial(newKey, newStateOptions[newKey]);
                 }
             }
+        });
 
             // We need to loop through the current state and remove any from it where it cannot find the equivalent in the new state.
             currentStateOptionsKeys.forEach((currentKey, curIndex) => {
