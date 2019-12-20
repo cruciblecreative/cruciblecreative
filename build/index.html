@@ -243,6 +243,9 @@
                     <a href="#change-garment-customization" class="toc-h2 toc-link" data-title="Change Garment Customization">Change Garment Customization</a>
                   </li>
                   <li>
+                    <a href="#reset-viewer-to-default" class="toc-h2 toc-link" data-title="Reset Viewer to default">Reset Viewer to default</a>
+                  </li>
+                  <li>
                     <a href="#take-garment-screenshots-for-checkout" class="toc-h2 toc-link" data-title="Take Garment Screenshots for checkout">Take Garment Screenshots for checkout</a>
                   </li>
               </ul>
@@ -308,7 +311,7 @@
 <p>&#39;#emersyaIframe&#39; can be whatever you would prefer the id of the iframe to be.</p>
 </blockquote>
 <h1 id='the-update-function'>The Update function</h1>
-<p>Added as of 18/12/19. This will be the primary way to interact with the service layer. The update function accepts an object (such as currentGarment above) and compares it to the object currently held in <code>garmentState</code> which is set by the visualizer when it was initialized. If the data is structured as it is above, it will be able to find the <code>options</code> object in <code>garment</code>.</p>
+<p>This will be the primary way to interact with the service layer. The update function accepts an object (such as currentGarment above) and compares it to the object currently held in <code>garmentState</code> which is set by the visualizer when it was initialized. If the data is structured as it is above, it will be able to find the <code>options</code> object in <code>garment</code>.</p>
 
 <p>Whether you update <code>currentGarment</code> or you pass in a new version, it will attempt to update it&#39;s held object values to match the new. </p>
 <pre class="highlight javascript tab-javascript"><code>
@@ -341,6 +344,10 @@
 <p>This will most likely occur after the user has clicked the garment and triggered garmentView to zoom in and also reveal the options in the customizer.</p>
 <pre class="highlight javascript tab-javascript"><code>
 <span class="kd">var</span> <span class="nx">garmentCustomization</span> <span class="o">=</span> <span class="nx">visualizer</span><span class="p">.</span><span class="nx">changeGarmentCustomization</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</code></pre><h2 id='reset-viewer-to-default'>Reset Viewer to default</h2>
+<p>Likely not needed, but may be useful. Accepts data of options that have been cleared of customizations.</p>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">visualizer</span><span class="p">.</span><span class="nx">resetView</span><span class="p">(</span><span class="nx">currentGarment</span><span class="p">);</span>
+
 </code></pre><h2 id='take-garment-screenshots-for-checkout'>Take Garment Screenshots for checkout</h2>
 <p>This function will generate 4 images from the garment (front, back, left, right), on a transparent background, and return an array of URLs.</p>
 <pre class="highlight javascript tab-javascript"><code>

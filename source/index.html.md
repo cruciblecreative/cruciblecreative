@@ -61,7 +61,7 @@ visualizer.init(currentGarment);
 
 # The Update function
 
-Added as of 18/12/19. This will be the primary way to interact with the service layer. The update function accepts an object (such as currentGarment above) and compares it to the object currently held in `garmentState` which is set by the visualizer when it was initialized. If the data is structured as it is above, it will be able to find the `options` object in `garment`.
+This will be the primary way to interact with the service layer. The update function accepts an object (such as currentGarment above) and compares it to the object currently held in `garmentState` which is set by the visualizer when it was initialized. If the data is structured as it is above, it will be able to find the `options` object in `garment`.
 
 Whether you update `currentGarment` or you pass in a new version, it will attempt to update it's held object values to match the new. 
 
@@ -119,6 +119,15 @@ This will most likely occur after the user has clicked the garment and triggered
 ```javascript
 
 var garmentCustomization = visualizer.changeGarmentCustomization(id);
+```
+
+## Reset Viewer to default
+
+Likely not needed, but may be useful. Accepts data of options that have been cleared of customizations.
+
+```javascript
+visualizer.resetView(currentGarment);
+
 ```
 
 ## Take Garment Screenshots for checkout

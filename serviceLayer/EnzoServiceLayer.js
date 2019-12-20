@@ -10,7 +10,7 @@ class Visualizer {
 
     // This is just part of the visualizer and doesn't need to return anything currently.
 
-    setHighlight = function(polylist) {
+    setHighlight = function(highlighedMaterial) {
         var iframe = this.iframe;
         var viewerIframe = iframe.contentWindow;
         viewerIframe.postMessage({
@@ -21,7 +21,7 @@ class Visualizer {
         viewerIframe.postMessage({
                 action: "setHighlight",
                 meshes : [],
-                configurableMaterials: [polylist],
+                configurableMaterials: [highlighedMaterial],
                 configurableMaterialGroups : []
             },
             "*"
@@ -59,6 +59,26 @@ class Visualizer {
             },
             "*"
         );
+    };
+
+    // used for when you want to revert everything back to the initial state.
+    resetView = function(resetState) {
+        var iframe = this.iframe;
+        var viewerIframe = iframe.contentWindow;
+        viewerIframe.postMessage({
+                action: "beginTransaction"
+            },
+            "*"
+        );
+        viewerIframe.postMessage({
+            action : 'resetMaterials'
+        },'*');
+        viewerIframe.postMessage({
+                action: "endTransaction"
+            },
+            "*"
+        );
+        this.update(resetState);
     };
 
     /* customizer functions */
@@ -201,17 +221,33 @@ class Visualizer {
 
                 // This should set the key and value
                 currentStateOptions[newKey] = newStateOptions[newKey];
+            } else {
+
+                // This runs if the key exists. Now we check to see if the value has changed. Like if a customization has been set to a different material.
+                // This shouldnt throw a false positive because at this stage we know that the key exists in the object index for sure.
+                if (Object.values(currentStateOptions).indexOf(newStateOptions[newKey]) == -1) {
+                    this.changeGarmentMaterial(newKey, newStateOptions[newKey]);
+                }
             }
 
-            // Loop through the current state as it's currently an array of keys. Ignore this for now as it will be used soon.
+            // We need to loop through the current state and remove any from it where it cannot find the equivalent in the new state.
             currentStateOptionsKeys.forEach((currentKey, curIndex) => {
                 
+                // if the current key index does not exist in the new state. That means something in the customizer has been undone/removed
+                if (newStateOptionsKeys.includes(currentKey) == false) {
+                    // Will be looking to see how we can implement this through Emersya's API.
+                }
             });
 
         });
 
         // We want this to happen last.
-        // this.garmentState = newState;
+        this.garmentState = newState;
+    }
+
+    // like visualizerEventListener but needs to return where the user clicked.
+    subscribe = () => {
+        
     }
 
     init(currentGarment) {
@@ -243,8 +279,6 @@ class Visualizer {
                 },
                 "*"
             );
-            // add the initial state to the visualizer
-            this.garmentState = currentGarment;
         };
 
         // This is how emersya prefers it's listener structured
@@ -260,12 +294,8 @@ class Visualizer {
             }
             if (event.data && event.data.action == "onConfigurableMaterialHighlight") {
                 if (viewerWidth >= 768) {
-                    this.setHighlight(event.data.polylistName);
+                    this.setHighlight(event.data.configurableMaterialsName);
                 }
-            }
-
-            if (event.data && event.data.action == "onConfigurableMaterialHighlight") {
-                //  this.changeGarmentView(1);
             }
             if (event.data && event.data.action == "onScreenshots") {
                 this.screenshots = event.data.screenshots;
