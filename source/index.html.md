@@ -112,9 +112,9 @@ var garmentMaterial = visualizer.changeGarmentMaterial(display, material);
 
 ## Change Garment Customization
 
-To change the garment's variant of the part of the garment. E.g. changing the width of the lapel.
+As of 23/12/19, Emma has stated that changing the material and changing the customization are handled by the same API function. I will keep this method in the documentation but it will essentially run the same as `changeGarmentMaterial`. 
 
-This will most likely occur after the user has clicked the garment and triggered garmentView to zoom in and also reveal the options in the customizer.
+It is recommended that these functions are not used unless necessary, as they will not change the currentState held by the visualizer.
 
 ```javascript
 
